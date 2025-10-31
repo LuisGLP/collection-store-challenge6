@@ -1,0 +1,152 @@
+2025-10-30 10:30:32.091 [qtp1035131661-43] INFO  - GET /api/users - Método: GET - IP: [0:0:0:0:0:0:0:1]
+2025-10-30 10:30:32.129 [qtp1035131661-43] ERROR - Error obteniendo usuarios
+java.lang.RuntimeException: Error al obtener usuarios
+	at org.challenge6.javaspark.services.UserService.getAllUsers(UserService.java:61)
+	at org.challenge6.javaspark.Controllers.UserController.getAllUsers(UserController.java:30)
+	at spark.RouteImpl$1.handle(RouteImpl.java:72)
+	at spark.http.matching.Routes.execute(Routes.java:61)
+	at spark.http.matching.MatcherFilter.doFilter(MatcherFilter.java:134)
+	at spark.embeddedserver.jetty.JettyHandler.doHandle(JettyHandler.java:50)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1598)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:127)
+	at org.eclipse.jetty.server.Server.handle(Server.java:516)
+	at org.eclipse.jetty.server.HttpChannel.lambda$handle$1(HttpChannel.java:487)
+	at org.eclipse.jetty.server.HttpChannel.dispatch(HttpChannel.java:732)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:479)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:277)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:311)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:105)
+	at org.eclipse.jetty.io.ChannelEndPoint$1.run(ChannelEndPoint.java:104)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:883)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$Runner.run(QueuedThreadPool.java:1034)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+Caused by: org.postgresql.util.PSQLException: The column name address was not found in this ResultSet.
+	at org.postgresql.jdbc.PgResultSet.findColumn(PgResultSet.java:3033)
+	at org.postgresql.jdbc.PgResultSet.getString(PgResultSet.java:2888)
+	at com.zaxxer.hikari.pool.HikariProxyResultSet.getString(HikariProxyResultSet.java)
+	at org.challenge6.javaspark.services.UserService.mapResultSetToUser(UserService.java:31)
+	at org.challenge6.javaspark.services.UserService.getAllUsers(UserService.java:55)
+	... 19 common frames omitted
+2025-10-30 22:08:17.255 [qtp179350888-47] INFO  - GET /api/users - Método: GET - IP: [0:0:0:0:0:0:0:1]
+2025-10-30 22:08:17.277 [qtp179350888-47] ERROR - Error obteniendo usuarios
+com.google.gson.JsonIOException: Failed making field 'java.time.LocalDateTime#date' accessible; either increase its visibility or write a custom TypeAdapter for its declaring type.
+	at com.google.gson.internal.reflect.ReflectionHelper.makeAccessible(ReflectionHelper.java:38)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.getBoundFields(ReflectiveTypeAdapterFactory.java:286)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.create(ReflectiveTypeAdapterFactory.java:130)
+	at com.google.gson.Gson.getAdapter(Gson.java:556)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.createBoundField(ReflectiveTypeAdapterFactory.java:160)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.getBoundFields(ReflectiveTypeAdapterFactory.java:294)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.create(ReflectiveTypeAdapterFactory.java:130)
+	at com.google.gson.Gson.getAdapter(Gson.java:556)
+	at com.google.gson.internal.bind.TypeAdapterRuntimeTypeWrapper.write(TypeAdapterRuntimeTypeWrapper.java:55)
+	at com.google.gson.internal.bind.CollectionTypeAdapterFactory$Adapter.write(CollectionTypeAdapterFactory.java:97)
+	at com.google.gson.internal.bind.CollectionTypeAdapterFactory$Adapter.write(CollectionTypeAdapterFactory.java:61)
+	at com.google.gson.Gson.toJson(Gson.java:842)
+	at com.google.gson.Gson.toJson(Gson.java:812)
+	at com.google.gson.Gson.toJson(Gson.java:759)
+	at com.google.gson.Gson.toJson(Gson.java:736)
+	at org.challenge6.javaspark.Controllers.UserController.getAllUsers(UserController.java:33)
+	at spark.RouteImpl$1.handle(RouteImpl.java:72)
+	at spark.http.matching.Routes.execute(Routes.java:61)
+	at spark.http.matching.MatcherFilter.doFilter(MatcherFilter.java:134)
+	at spark.embeddedserver.jetty.JettyHandler.doHandle(JettyHandler.java:50)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1598)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:127)
+	at org.eclipse.jetty.server.Server.handle(Server.java:516)
+	at org.eclipse.jetty.server.HttpChannel.lambda$handle$1(HttpChannel.java:487)
+	at org.eclipse.jetty.server.HttpChannel.dispatch(HttpChannel.java:732)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:479)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:277)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:311)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:105)
+	at org.eclipse.jetty.io.ChannelEndPoint$1.run(ChannelEndPoint.java:104)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:338)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:315)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:173)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:131)
+	at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:409)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:883)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$Runner.run(QueuedThreadPool.java:1034)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+Caused by: java.lang.reflect.InaccessibleObjectException: Unable to make field private final java.time.LocalDate java.time.LocalDateTime.date accessible: module java.base does not "opens java.time" to unnamed module @3dd4520b
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:354)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:297)
+	at java.base/java.lang.reflect.Field.checkCanSetAccessible(Field.java:178)
+	at java.base/java.lang.reflect.Field.setAccessible(Field.java:172)
+	at com.google.gson.internal.reflect.ReflectionHelper.makeAccessible(ReflectionHelper.java:35)
+	... 38 common frames omitted
+2025-10-30 22:16:50.016 [qtp648045830-42] INFO  - GET /api/users - Método: GET - IP: [0:0:0:0:0:0:0:1]
+2025-10-30 22:16:50.041 [qtp648045830-42] ERROR - Error obteniendo usuarios
+com.google.gson.JsonIOException: Failed making field 'java.time.LocalDateTime#date' accessible; either increase its visibility or write a custom TypeAdapter for its declaring type.
+	at com.google.gson.internal.reflect.ReflectionHelper.makeAccessible(ReflectionHelper.java:38)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.getBoundFields(ReflectiveTypeAdapterFactory.java:286)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.create(ReflectiveTypeAdapterFactory.java:130)
+	at com.google.gson.Gson.getAdapter(Gson.java:556)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.createBoundField(ReflectiveTypeAdapterFactory.java:160)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.getBoundFields(ReflectiveTypeAdapterFactory.java:294)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.create(ReflectiveTypeAdapterFactory.java:130)
+	at com.google.gson.Gson.getAdapter(Gson.java:556)
+	at com.google.gson.internal.bind.TypeAdapterRuntimeTypeWrapper.write(TypeAdapterRuntimeTypeWrapper.java:55)
+	at com.google.gson.internal.bind.CollectionTypeAdapterFactory$Adapter.write(CollectionTypeAdapterFactory.java:97)
+	at com.google.gson.internal.bind.CollectionTypeAdapterFactory$Adapter.write(CollectionTypeAdapterFactory.java:61)
+	at com.google.gson.Gson.toJson(Gson.java:842)
+	at com.google.gson.Gson.toJson(Gson.java:812)
+	at com.google.gson.Gson.toJson(Gson.java:759)
+	at com.google.gson.Gson.toJson(Gson.java:736)
+	at org.challenge6.javaspark.Controllers.UserController.getAllUsers(UserController.java:33)
+	at spark.RouteImpl$1.handle(RouteImpl.java:72)
+	at spark.http.matching.Routes.execute(Routes.java:61)
+	at spark.http.matching.MatcherFilter.doFilter(MatcherFilter.java:134)
+	at spark.embeddedserver.jetty.JettyHandler.doHandle(JettyHandler.java:50)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1598)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:127)
+	at org.eclipse.jetty.server.Server.handle(Server.java:516)
+	at org.eclipse.jetty.server.HttpChannel.lambda$handle$1(HttpChannel.java:487)
+	at org.eclipse.jetty.server.HttpChannel.dispatch(HttpChannel.java:732)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:479)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:277)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:311)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:105)
+	at org.eclipse.jetty.io.ChannelEndPoint$1.run(ChannelEndPoint.java:104)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:883)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$Runner.run(QueuedThreadPool.java:1034)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+Caused by: java.lang.reflect.InaccessibleObjectException: Unable to make field private final java.time.LocalDate java.time.LocalDateTime.date accessible: module java.base does not "opens java.time" to unnamed module @167fdd33
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:354)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:297)
+	at java.base/java.lang.reflect.Field.checkCanSetAccessible(Field.java:178)
+	at java.base/java.lang.reflect.Field.setAccessible(Field.java:172)
+	at com.google.gson.internal.reflect.ReflectionHelper.makeAccessible(ReflectionHelper.java:35)
+	... 33 common frames omitted
+2025-10-30 22:21:08.042 [qtp1611216950-43] INFO  - GET /api/users - Método: GET - IP: [0:0:0:0:0:0:0:1]
+2025-10-30 22:22:50.727 [qtp648045830-42] INFO  - GET /api/users - Método: GET - IP: [0:0:0:0:0:0:0:1]
+2025-10-30 22:47:40.361 [qtp38991973-47] INFO  - GET /api/users - Method: GET - IP: [0:0:0:0:0:0:0:1]
+2025-10-30 22:55:40.296 [qtp38991973-49] INFO  - POST /api/users/4 - Method: POST - IP: [0:0:0:0:0:0:0:1] - Body: {
+  "name": "Pedro Martínez",
+  "email": "pedro@example.com",
+  "address": "Calle Nueva 321"
+}
+2025-10-30 22:55:40.340 [qtp38991973-49] ERROR - Error creating user: Error al crear usuario
+2025-10-30 22:55:56.678 [qtp38991973-37] INFO  - POST /api/users/4 - Method: POST - IP: [0:0:0:0:0:0:0:1] - Body: {
+  "name": "Pedro Martínez",
+  "email": "pedro@example.com"
+}
+2025-10-30 22:55:56.682 [qtp38991973-37] ERROR - Error creating user: Error al crear usuario
+2025-10-30 22:56:21.198 [qtp38991973-49] INFO  - POST /api/users/5 - Method: POST - IP: [0:0:0:0:0:0:0:1] - Body: {
+  "name": "Pedro Martínez",
+  "email": "pedro@example.com"
+}
+2025-10-30 22:56:21.203 [qtp38991973-49] ERROR - Error creating user: Error al crear usuario
+2025-10-30 22:56:26.091 [qtp38991973-37] INFO  - POST /api/users/6 - Method: POST - IP: [0:0:0:0:0:0:0:1] - Body: {
+  "name": "Pedro Martínez",
+  "email": "pedro@example.com"
+}
+2025-10-30 22:56:26.094 [qtp38991973-37] ERROR - Error creating user: Error al crear usuario
+2025-10-30 23:01:10.615 [qtp1266112370-45] INFO  - POST /api/users/6 - Method: POST - IP: [0:0:0:0:0:0:0:1] - Body: {
+  "name": "Pedro Martínez",
+  "email": "pedro@example.com"
+}
+2025-10-30 23:01:10.665 [qtp1266112370-45] ERROR - Error creating user: Error al crear usuario

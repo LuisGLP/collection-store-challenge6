@@ -1,33 +1,39 @@
 package org.challenge6.javaspark.entity;
 
-public class User {
-    private String id;
-    private String firstName;
-    private String lastName;
-    private String email;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-    public String getId() {
+public class User {
+    private int id;
+    private String name;
+    private String email;
+    private LocalDateTime createdAt;
+
+    public User() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public User(int id, String name, String email, String address) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -36,5 +42,24 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", createdAt=" + createdAt.toString() +
+                '}';
     }
 }

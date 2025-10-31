@@ -1,0 +1,504 @@
+{
+  "info": {
+    "name": "Collectibles Store API - Complete",
+    "description": "Colección completa para probar la API de Tienda de Coleccionables con PostgreSQL",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12345"
+  },
+  "item": [
+    {
+      "name": "Users API",
+      "item": [
+        {
+          "name": "GET All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/api/users",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "users"]
+            },
+            "description": "Obtiene la lista completa de usuarios en formato JSON"
+          },
+          "response": []
+        },
+        {
+          "name": "GET User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/api/users/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "users", "1"]
+            },
+            "description": "Obtiene un usuario específico por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "POST Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pedro Martínez\",\n  \"email\": \"pedro@example.com\",\n  \"address\": \"Calle Nueva 321\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4567/api/users/4",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "users", "4"]
+            },
+            "description": "Crea un nuevo usuario con el ID especificado"
+          },
+          "response": []
+        },
+        {
+          "name": "POST Create User - Error Duplicate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Usuario Duplicado\",\n  \"email\": \"juan@example.com\",\n  \"address\": \"Calle Test 100\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4567/api/users/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "users", "1"]
+            },
+            "description": "Prueba crear un usuario con ID o email duplicado (debe fallar)"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan Pérez Actualizado\",\n  \"email\": \"juan.nuevo@example.com\",\n  \"address\": \"Calle Principal 456\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4567/api/users/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "users", "1"]
+            },
+            "description": "Actualiza los datos de un usuario existente"
+          },
+          "response": []
+        },
+        {
+          "name": "OPTIONS Check User Exists",
+          "request": {
+            "method": "OPTIONS",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/api/users/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "users", "1"]
+            },
+            "description": "Verifica si existe un usuario con el ID especificado"
+          },
+          "response": []
+        },
+        {
+          "name": "OPTIONS Check User NOT Exists",
+          "request": {
+            "method": "OPTIONS",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/api/users/999",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "users", "999"]
+            },
+            "description": "Verifica un usuario que no existe"
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/api/users/3",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "users", "3"]
+            },
+            "description": "Elimina un usuario específico"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Collectibles API",
+      "item": [
+        {
+          "name": "GET All Collectibles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/api/collectibles",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "collectibles"]
+            },
+            "description": "Obtiene todos los coleccionables en formato JSON"
+          },
+          "response": []
+        },
+        {
+          "name": "GET Collectible by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/api/collectibles/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "collectibles", "1"]
+            },
+            "description": "Obtiene un coleccionable por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "POST Create Collectible",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Figura Star Wars Darth Vader\",\n  \"description\": \"Figura de colección edición limitada 30cm\",\n  \"price\": 899.99,\n  \"category\": \"Figuras\",\n  \"stock\": 10\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4567/api/collectibles",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "collectibles"]
+            },
+            "description": "Crea un nuevo coleccionable"
+          },
+          "response": []
+        },
+        {
+          "name": "POST Create Collectible - Funko Pop",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Funko Pop Goku Super Saiyan\",\n  \"description\": \"Figura Funko Pop de Dragon Ball Z\",\n  \"price\": 349.99,\n  \"category\": \"Funko Pop\",\n  \"stock\": 25\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4567/api/collectibles",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "collectibles"]
+            },
+            "description": "Crea un Funko Pop"
+          },
+          "response": []
+        },
+        {
+          "name": "POST Create Collectible - Comic",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Comic Batman: Year One\",\n  \"description\": \"Cómic clásico de Batman, edición especial\",\n  \"price\": 599.99,\n  \"category\": \"Comics\",\n  \"stock\": 5\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4567/api/collectibles",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "collectibles"]
+            },
+            "description": "Crea un cómic"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Update Collectible (Price Change - Triggers WebSocket)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Funko Pop Batman\",\n  \"description\": \"Figura coleccionable de Batman edición especial\",\n  \"price\": 349.99,\n  \"category\": \"Funko Pop\",\n  \"stock\": 15\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4567/api/collectibles/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "collectibles", "1"]
+            },
+            "description": "Actualiza un coleccionable. Si cambia el precio, envía notificación vía WebSocket y registra en logs"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Update Collectible - Stock Only",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Comic Spider-Man #1\",\n  \"description\": \"Primera edición del cómic de Spider-Man (réplica)\",\n  \"price\": 5999.99,\n  \"category\": \"Comics\",\n  \"stock\": 8\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4567/api/collectibles/2",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "collectibles", "2"]
+            },
+            "description": "Actualiza solo el stock (no activa WebSocket porque el precio no cambió)"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Update Collectible - Price Increase",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Carta Pokémon Charizard\",\n  \"description\": \"Carta holográfica primera edición\",\n  \"price\": 1799.99,\n  \"category\": \"Cartas\",\n  \"stock\": 5\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4567/api/collectibles/3",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "collectibles", "3"]
+            },
+            "description": "Aumenta el precio (activa WebSocket y log)"
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Collectible",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/api/collectibles/5",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "collectibles", "5"]
+            },
+            "description": "Elimina un coleccionable"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Testing",
+      "item": [
+        {
+          "name": "GET User NOT Found (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/api/users/999",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "users", "999"]
+            },
+            "description": "Prueba error 404 - Usuario no encontrado"
+          },
+          "response": []
+        },
+        {
+          "name": "GET Collectible NOT Found (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/api/collectibles/999",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "collectibles", "999"]
+            },
+            "description": "Prueba error 404 - Coleccionable no encontrado"
+          },
+          "response": []
+        },
+        {
+          "name": "POST Invalid JSON (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test\",\n  \"invalid json\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4567/api/users/test",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "users", "test"]
+            },
+            "description": "Prueba error 400 - JSON inválido"
+          },
+          "response": []
+        },
+        {
+          "name": "GET Route NOT Found (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/api/invalid-route",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["api", "invalid-route"]
+            },
+            "description": "Prueba ruta inexistente"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health & Info",
+      "item": [
+        {
+          "name": "GET Home Page (HTML)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": [""]
+            },
+            "description": "Página de inicio en HTML"
+          },
+          "response": []
+        },
+        {
+          "name": "GET Users Page (HTML)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/users",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["users"]
+            },
+            "description": "Página HTML de lista de usuarios"
+          },
+          "response": []
+        },
+        {
+          "name": "GET Collectibles Page (HTML)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4567/collectibles",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4567",
+              "path": ["collectibles"]
+            },
+            "description": "Página HTML de coleccionables con formulario"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

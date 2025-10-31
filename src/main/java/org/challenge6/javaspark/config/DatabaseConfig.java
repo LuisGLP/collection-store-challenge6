@@ -14,9 +14,9 @@ public class DatabaseConfig {
     private static HikariDataSource dataSource;
 
     // Configuración de la base de datos
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/collectibles_store";
-    private static final String DB_USER = "postgres";
-    private static final String DB_PASSWORD = "postgres";
+    private static final String DB_URL = "jdbc:postgresql://localhost:5432/collection_store";
+    private static final String DB_USER = "collection";
+    private static final String DB_PASSWORD = "collection";
 
     private DatabaseConfig() {
         // Constructor privado para patrón Singleton
@@ -43,16 +43,16 @@ public class DatabaseConfig {
                 config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
                 dataSource = new HikariDataSource(config);
-                logger.info("Pool de conexiones inicializado correctamente");
+                logger.info("Pool initialized correctly");
 
                 // Verificar la conexión
                 try (Connection conn = dataSource.getConnection()) {
-                    logger.info("Conexión a PostgreSQL establecida: {}", conn.getMetaData().getDatabaseProductVersion());
+                    logger.info("Connection established : {}", conn.getMetaData().getDatabaseProductVersion());
                 }
 
             } catch (Exception e) {
-                logger.error("Error al inicializar el pool de conexiones", e);
-                throw new RuntimeException("No se pudo conectar a la base de datos", e);
+                logger.error("Error to initialize the pool o connections", e);
+                throw new RuntimeException("Cant connect to database", e);
             }
         }
     }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Console Appender -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender para requests HTTP -->
+    <appender name="HTTP_REQUESTS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/http-requests.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/http-requests-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender para cambios de precios -->
+    <appender name="PRICE_CHANGES" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/price-changes.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/price-changes-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger para HTTP requests -->
+    <logger name="HTTP_LOGGER" level="INFO" additivity="false">
+        <appender-ref ref="HTTP_REQUESTS"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!-- Logger para cambios de precios -->
+    <logger name="PRICE_LOGGER" level="INFO" additivity="false">
+        <appender-ref ref="PRICE_CHANGES"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
