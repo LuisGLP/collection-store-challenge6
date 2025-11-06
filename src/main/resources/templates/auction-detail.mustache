@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .item-info h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .base-price {
+            font-size: 2em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .offer-form h2 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .offers-list {
+            grid-column: 1 / -1;
+        }
+
+        .offers-list h2 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .offers-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .offers-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .offers-table th,
+        .offers-table td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .offers-table tbody tr {
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+
+        .offers-table tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        .offer-amount {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .offer-time {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .highest-offer {
+            background: #fff3cd !important;
+            border-left: 4px solid #ffc107;
+        }
+
+        .badge-highest {
+            background: #ffc107;
+            color: #000;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .empty-offers {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .loading.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="/auctions" class="back-button">← Volver a Subastas</a>
+
+    <h1>🔨 {{title}}</h1>
+
+    <div id="alertContainer"></div>
+
+    <div class="content-grid">
+        <!-- Información del Item -->
+        <div class="card item-info">
+            <h2>📦 Información del Artículo</h2>
+            {{#item}}
+                <div class="info-row">
+                    <span class="info-label">ID:</span>
+                    <span class="info-value">{{id}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Nombre:</span>
+                    <span class="info-value">{{name}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Precio Base:</span>
+                    <span class="base-price">${{basePrice}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Estado:</span>
+                    <span class="info-value">{{status}}</span>
+                </div>
+            {{/item}}
+        </div>
+
+        <!-- Formulario de Oferta -->
+        <div class="card offer-form">
+            <h2>💰 Hacer una Oferta</h2>
+            <form id="offerForm">
+                <div class="form-group">
+                    <label for="userId">Selecciona Usuario:</label>
+                    <select id="userId" name="userId" required>
+                        <option value="">-- Selecciona un usuario --</option>
+                        {{#users}}
+                            <option value="{{id}}">{{name}} ({{email}})</option>
+                        {{/users}}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Monto de la Oferta ($):</label>
+                    <input
+                            type="number"
+                            id="amount"
+                            name="amount"
+                            step="0.01"
+                            min="{{item.basePrice}}"
+                            placeholder="Ingresa el monto"
+                            required
+                    >
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Enviar Oferta 🚀
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <p>⏳ Enviando oferta...</p>
+            </div>
+        </div>
+
+        <!-- Lista de Ofertas -->
+        <div class="card offers-list">
+            <h2>📊 Ofertas Realizadas</h2>
+            <div id="offersContainer">
+                <table class="offers-table">
+                    <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                    </tr>
+                    </thead>
+                    <tbody id="offersTableBody">
+                    <tr>
+                        <td colspan="4" class="empty-offers">
+                            Cargando ofertas...
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const itemId = '{{itemId}}';
+    let highestAmount = 0;
+
+    // Función para cargar ofertas
+    async function loadOffers() {
+        try {
+            const response = await fetch(`/api/items/${itemId}/offers`);
+            const offers = await response.json();
+
+            const tbody = document.getElementById('offersTableBody');
+
+            if (offers.length === 0) {
+                tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="empty-offers">
+                                No hay ofertas aún. ¡Sé el primero en ofertar!
+                            </td>
+                        </tr>
+                    `;
+                return;
+            }
+
+            // Encontrar la oferta más alta
+            highestAmount = Math.max(...offers.map(o => parseFloat(o.amount)));
+
+            // Ordenar por monto descendente
+            offers.sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
+
+            tbody.innerHTML = offers.map((offer, index) => {
+                const isHighest = index === 0;
+                const date = new Date(offer.createdAt);
+                const formattedDate = date.toLocaleString('es-MX');
+
+                return `
+                        <tr class="${isHighest ? 'highest-offer' : ''}">
+                            <td>${offer.userName || 'Usuario #' + offer.userId}</td>
+                            <td class="offer-amount">$${parseFloat(offer.amount).toFixed(2)}</td>
+                            <td class="offer-time">${formattedDate}</td>
+                            <td>${isHighest ? '<span class="badge-highest">🏆 MÁS ALTA</span>' : ''}</td>
+                        </tr>
+                    `;
+            }).join('');
+
+            // Actualizar el mínimo del input
+            const amountInput = document.getElementById('amount');
+            if (highestAmount > 0) {
+                amountInput.min = (highestAmount + 0.01).toFixed(2);
+                amountInput.placeholder = `Mínimo: $${(highestAmount + 0.01).toFixed(2)}`;
+            }
+
+        } catch (error) {
+            console.error('Error loading offers:', error);
+            showAlert('Error al cargar las ofertas', 'error');
+        }
+    }
+
+    // Función para mostrar alertas
+    function showAlert(message, type = 'success') {
+        const alertContainer = document.getElementById('alertContainer');
+        const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+
+        alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${message}
+                </div>
+            `;
+
+        setTimeout(() => {
+            alertContainer.innerHTML = '';
+        }, 5000);
+    }
+
+    // Manejar el envío del formulario
+    document.getElementById('offerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const userId = parseInt(formData.get('userId'));
+        const amount = parseFloat(formData.get('amount'));
+
+        // Validar que la oferta sea mayor a la más alta
+        if (highestAmount > 0 && amount <= highestAmount) {
+            showAlert(`La oferta debe ser mayor a $${highestAmount.toFixed(2)}`, 'error');
+            return;
+        }
+
+        const loading = document.getElementById('loading');
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+
+        loading.classList.add('active');
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/offers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    itemId: itemId,
+                    amount: amount
+                })
+            });
+
+            if (response.ok) {
+                showAlert('¡Oferta enviada exitosamente! 🎉', 'success');
+                e.target.reset();
+                loadOffers(); // Recargar ofertas
+            } else {
+                const error = await response.json();
+                showAlert(error.message || 'Error al enviar la oferta', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showAlert('Error de conexión. Intenta de nuevo.', 'error');
+        } finally {
+            loading.classList.remove('active');
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Cargar ofertas al inicio
+    loadOffers();
+
+    // Actualizar ofertas cada 5 segundos
+    setInterval(loadOffers, 5000);
+</script>
+</body>
+</html>
