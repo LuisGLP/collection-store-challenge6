@@ -46,6 +46,49 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
+        .ws-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .ws-status.connected {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .ws-status.disconnected {
+            background: #f44336;
+            color: white;
+        }
+
+        .ws-status.connecting {
+            background: #FF9800;
+            color: white;
+        }
+
+        .ws-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         .content-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -182,6 +225,15 @@
             background: #f5f5f5;
         }
 
+        .offers-table tbody tr.new-offer {
+            animation: highlightNew 2s ease-out;
+        }
+
+        @keyframes highlightNew {
+            0% { background: #fff3cd; }
+            100% { background: transparent; }
+        }
+
         .offer-amount {
             font-weight: bold;
             color: #667eea;
@@ -217,6 +269,18 @@
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .alert-success {
@@ -244,6 +308,11 @@
     </style>
 </head>
 <body>
+<div class="ws-status connecting" id="wsStatus">
+    <div class="ws-indicator"></div>
+    <span id="wsStatusText">Conectando...</span>
+</div>
+
 <div class="container">
     <a href="/auctions" class="back-button">← Volver a Subastas</a>
 
@@ -341,61 +410,215 @@
 <script>
     const itemId = '{{itemId}}';
     let highestAmount = 0;
+    let ws = null;
+    let reconnectInterval = null;
 
-    // Función para cargar ofertas
+    // ==================== WEBSOCKET ====================
+    function connectWebSocket() {
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${wsProtocol}//${window.location.host}/ws/auction?itemId=${itemId}`;
+
+        updateWSStatus('connecting', 'Conectando...');
+
+        try {
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                updateWSStatus('connected', 'Conectado');
+
+                // Limpiar intervalo de reconexión si existe
+                if (reconnectInterval) {
+                    clearInterval(reconnectInterval);
+                    reconnectInterval = null;
+                }
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log('WebSocket message:', data);
+
+                switch(data.type) {
+                    case 'connected':
+                        console.log('Connection confirmed:', data.message);
+                        // Cargar ofertas iniciales
+                        loadOffers();
+                        break;
+
+                    case 'new_offer':
+                        console.log('New offer received:', data.offer);
+                        showAlert('¡Nueva oferta recibida en tiempo real!', 'success');
+                        addOfferToTable(data.offer, true);
+                        break;
+
+                    case 'offer_deleted':
+                        console.log('Offer deleted:', data.offerId);
+                        removeOfferFromTable(data.offerId);
+                        break;
+
+                    case 'pong':
+                        console.log('Pong received');
+                        break;
+                }
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateWSStatus('disconnected', 'Error de conexión');
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket closed');
+                updateWSStatus('disconnected', 'Desconectado - Reintentando...');
+
+                // Intentar reconectar cada 5 segundos
+                if (!reconnectInterval) {
+                    reconnectInterval = setInterval(() => {
+                        if (ws.readyState === WebSocket.CLOSED) {
+                            console.log('Attempting to reconnect...');
+                            connectWebSocket();
+                        }
+                    }, 5000);
+                }
+            };
+        } catch (error) {
+            console.error('Error creating WebSocket:', error);
+            updateWSStatus('disconnected', 'Error de conexión');
+        }
+    }
+
+    function updateWSStatus(status, text) {
+        const statusEl = document.getElementById('wsStatus');
+        const textEl = document.getElementById('wsStatusText');
+
+        statusEl.className = `ws-status ${status}`;
+        textEl.textContent = text;
+    }
+
+    // Enviar ping cada 30 segundos para mantener conexión activa
+    setInterval(() => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'ping' }));
+        }
+    }, 30000);
+
+    // ==================== OFERTAS ====================
     async function loadOffers() {
         try {
             const response = await fetch(`/api/items/${itemId}/offers`);
             const offers = await response.json();
-
-            const tbody = document.getElementById('offersTableBody');
-
-            if (offers.length === 0) {
-                tbody.innerHTML = `
-                        <tr>
-                            <td colspan="4" class="empty-offers">
-                                No hay ofertas aún. ¡Sé el primero en ofertar!
-                            </td>
-                        </tr>
-                    `;
-                return;
-            }
-
-            // Encontrar la oferta más alta
-            highestAmount = Math.max(...offers.map(o => parseFloat(o.amount)));
-
-            // Ordenar por monto descendente
-            offers.sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
-
-            tbody.innerHTML = offers.map((offer, index) => {
-                const isHighest = index === 0;
-                const date = new Date(offer.createdAt);
-                const formattedDate = date.toLocaleString('es-MX');
-
-                return `
-                        <tr class="${isHighest ? 'highest-offer' : ''}">
-                            <td>${offer.userName || 'Usuario #' + offer.userId}</td>
-                            <td class="offer-amount">$${parseFloat(offer.amount).toFixed(2)}</td>
-                            <td class="offer-time">${formattedDate}</td>
-                            <td>${isHighest ? '<span class="badge-highest">🏆 MÁS ALTA</span>' : ''}</td>
-                        </tr>
-                    `;
-            }).join('');
-
-            // Actualizar el mínimo del input
-            const amountInput = document.getElementById('amount');
-            if (highestAmount > 0) {
-                amountInput.min = (highestAmount + 0.01).toFixed(2);
-                amountInput.placeholder = `Mínimo: $${(highestAmount + 0.01).toFixed(2)}`;
-            }
-
+            renderOffers(offers);
         } catch (error) {
             console.error('Error loading offers:', error);
             showAlert('Error al cargar las ofertas', 'error');
         }
     }
 
-    // Función para mostrar alertas
+    function renderOffers(offers) {
+        const tbody = document.getElementById('offersTableBody');
+
+        if (offers.length === 0) {
+            tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="empty-offers">
+                            No hay ofertas aún. ¡Sé el primero en ofertar!
+                        </td>
+                    </tr>
+                `;
+            return;
+        }
+
+        // Encontrar la oferta más alta
+        highestAmount = Math.max(...offers.map(o => parseFloat(o.amount)));
+
+        // Ordenar por monto descendente
+        offers.sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
+
+        tbody.innerHTML = offers.map((offer, index) => {
+            return createOfferRow(offer, index === 0);
+        }).join('');
+
+        // Actualizar el mínimo del input
+        updateMinAmount();
+    }
+
+    function createOfferRow(offer, isHighest) {
+        const date = new Date(offer.createdAt);
+        const formattedDate = date.toLocaleString('es-MX');
+
+        return `
+                <tr class="${isHighest ? 'highest-offer' : ''}" data-offer-id="${offer.id}">
+                    <td>${offer.userName || 'Usuario #' + offer.userId}</td>
+                    <td class="offer-amount">$${parseFloat(offer.amount).toFixed(2)}</td>
+                    <td class="offer-time">${formattedDate}</td>
+                    <td>${isHighest ? '<span class="badge-highest">🏆 MÁS ALTA</span>' : ''}</td>
+                </tr>
+            `;
+    }
+
+    function addOfferToTable(offer, animate = false) {
+        const tbody = document.getElementById('offersTableBody');
+
+        // Verificar si es la primera oferta
+        if (tbody.querySelector('.empty-offers')) {
+            tbody.innerHTML = '';
+        }
+
+        // Actualizar highestAmount
+        const offerAmount = parseFloat(offer.amount);
+        if (offerAmount > highestAmount) {
+            highestAmount = offerAmount;
+            updateMinAmount();
+
+            // Remover badge de oferta más alta anterior
+            const previousHighest = tbody.querySelector('.highest-offer');
+            if (previousHighest) {
+                previousHighest.classList.remove('highest-offer');
+                previousHighest.querySelector('.badge-highest')?.remove();
+            }
+        }
+
+        // Crear nueva fila
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = createOfferRow(offer, offerAmount >= highestAmount).replace('<tr', '').replace('</tr>', '');
+        if (animate) {
+            newRow.classList.add('new-offer');
+        }
+
+        // Insertar en orden correcto
+        let inserted = false;
+        const rows = tbody.querySelectorAll('tr');
+        for (let row of rows) {
+            const rowAmount = parseFloat(row.querySelector('.offer-amount').textContent.replace('$', ''));
+            if (offerAmount > rowAmount) {
+                tbody.insertBefore(newRow, row);
+                inserted = true;
+                break;
+            }
+        }
+
+        if (!inserted) {
+            tbody.appendChild(newRow);
+        }
+    }
+
+    function removeOfferFromTable(offerId) {
+        const row = document.querySelector(`tr[data-offer-id="${offerId}"]`);
+        if (row) {
+            row.remove();
+            // Recargar para recalcular la oferta más alta
+            loadOffers();
+        }
+    }
+
+    function updateMinAmount() {
+        const amountInput = document.getElementById('amount');
+        if (highestAmount > 0) {
+            amountInput.min = (highestAmount + 0.01).toFixed(2);
+            amountInput.placeholder = `Mínimo: $${(highestAmount + 0.01).toFixed(2)}`;
+        }
+    }
+
     function showAlert(message, type = 'success') {
         const alertContainer = document.getElementById('alertContainer');
         const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
@@ -411,7 +634,7 @@
         }, 5000);
     }
 
-    // Manejar el envío del formulario
+    // ==================== FORMULARIO ====================
     document.getElementById('offerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -447,7 +670,7 @@
             if (response.ok) {
                 showAlert('¡Oferta enviada exitosamente! 🎉', 'success');
                 e.target.reset();
-                loadOffers(); // Recargar ofertas
+                // No necesitamos recargar manualmente, WebSocket lo hará
             } else {
                 const error = await response.json();
                 showAlert(error.message || 'Error al enviar la oferta', 'error');
@@ -461,11 +684,15 @@
         }
     });
 
-    // Cargar ofertas al inicio
-    loadOffers();
+    // ==================== INICIALIZACIÓN ====================
+    connectWebSocket();
 
-    // Actualizar ofertas cada 5 segundos
-    setInterval(loadOffers, 5000);
+    // Cleanup al cerrar la página
+    window.addEventListener('beforeunload', () => {
+        if (ws) {
+            ws.close();
+        }
+    });
 </script>
 </body>
 </html>

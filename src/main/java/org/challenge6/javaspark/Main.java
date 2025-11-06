@@ -3,7 +3,11 @@ package org.challenge6.javaspark;
 import org.challenge6.javaspark.Controllers.ItemController;
 import org.challenge6.javaspark.Controllers.OfferController;
 import org.challenge6.javaspark.Controllers.UserController;
+import org.challenge6.javaspark.Controllers.ViewController;
 import org.challenge6.javaspark.config.DatabaseConfig;
+import org.challenge6.javaspark.exceptions.CustomException;
+import org.challenge6.javaspark.exceptions.ExceptionHandler;
+import org.challenge6.javaspark.websocket.AuctionWebSocketHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +30,46 @@ public class Main {
         // IMPORTANTE: Estas configuraciones DEBEN ir ANTES de cualquier ruta
         port(4567);
         staticFiles.location("/public");
+        // ==================== CONFIGURACIÓN WEBSOCKET ====================
+        webSocket("/ws/auction", AuctionWebSocketHandler.class);
+        webSocketIdleTimeoutMillis(300000);
+
+        // ==================== MANEJO GLOBAL DE EXCEPCIONES ====================
+        // Manejar 404 - Ruta no encontrada
+        notFound((req, res) -> ExceptionHandler.handleNotFound(req, res));
+
+        // Manejar 500 - Error interno del servidor
+        internalServerError((req, res) ->
+                ExceptionHandler.handleInternalError(new Exception("Internal Server Error"), req, res)
+        );
+
+        // Manejar excepciones genéricas
+        exception(Exception.class, (e, req, res) -> {
+            res.body(ExceptionHandler.handleInternalError(e, req, res));
+        });
+
+        // Manejar excepciones personalizadas
+        exception(CustomException.class, (e, req, res) -> {
+            res.body(ExceptionHandler.handleCustomException(e, req, res));
+        });
+        // ==================== CONFIGURACIÓN WEBSOCKET ====================
+        // DEBE configurarse ANTES de init() y ANTES de definir rutas
+        webSocket("/ws/auction", AuctionWebSocketHandler.class);
+        webSocketIdleTimeoutMillis(300000); // 5 minutos
+
         // ==================== CONFIGURACIÓN DE CORS ====================
         enableCORS();
-
 
         // ==================== INICIALIZAR CONTROLADORES ====================
         UserController userController = new UserController();
         ItemController itemController = new ItemController();
         OfferController offerController = new OfferController();
+        ViewController viewController = new ViewController();
+
+        // ==================== VISTAS (Mustache) ====================
+        get("/auctions", viewController::renderAuctionList);
+        get("/auction/:id", viewController::renderAuctionDetail);
+
         // ==================== API USUARIOS ====================
         get("/api/users", userController::getAllUsers);
         get("/api/users/:id", userController::getUserById);
@@ -82,6 +118,23 @@ public class Main {
             return "Hello, " + req.params(":name");
         });
 
+        // Ruta informativa para WebSocket
+        get("/ws/info", (req, res) -> {
+            res.type("application/json");
+            return "{\n" +
+                    "  \"websocket_url\": \"ws://localhost:4567/ws/auction\",\n" +
+                    "  \"usage\": \"ws://localhost:4567/ws/auction?itemId=YOUR_ITEM_ID\",\n" +
+                    "  \"protocol\": \"WebSocket\",\n" +
+                    "  \"status\": \"active\"\n" +
+                    "}";
+        });
+
+        // ==================== PÁGINA PRINCIPAL ====================
+        get("/", (req, res) -> {
+            res.redirect("/auctions");
+            return null;
+        });
+
         // Shutdown hook para cerrar la base de datos correctamente
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Closing application...");
@@ -92,6 +145,10 @@ public class Main {
         // Log de inicio
         logger.info("===========================================");
         logger.info(" Server successfully initialized");
+        logger.info(" URL: http://localhost:4567");
+        logger.info(" Auctions: http://localhost:4567/auctions");
+        logger.info(" WebSocket: ws://localhost:4567/ws/auction");
+        logger.info(" WS Info: http://localhost:4567/ws/info");
         logger.info(" Database connected successfully");
         logger.info("===========================================");
     }
