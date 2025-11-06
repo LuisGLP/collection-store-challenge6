@@ -3,7 +3,10 @@ package org.challenge6.javaspark;
 import org.challenge6.javaspark.Controllers.ItemController;
 import org.challenge6.javaspark.Controllers.OfferController;
 import org.challenge6.javaspark.Controllers.UserController;
+import org.challenge6.javaspark.Controllers.ViewController;
 import org.challenge6.javaspark.config.DatabaseConfig;
+import org.challenge6.javaspark.exceptions.CustomException;
+import org.challenge6.javaspark.exceptions.ExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +29,39 @@ public class Main {
         // IMPORTANTE: Estas configuraciones DEBEN ir ANTES de cualquier ruta
         port(4567);
         staticFiles.location("/public");
+
+        // ==================== MANEJO GLOBAL DE EXCEPCIONES ====================
+        // Manejar 404 - Ruta no encontrada
+        notFound((req, res) -> ExceptionHandler.handleNotFound(req, res));
+
+        // Manejar 500 - Error interno del servidor
+        internalServerError((req, res) ->
+                ExceptionHandler.handleInternalError(new Exception("Internal Server Error"), req, res)
+        );
+
+        // Manejar excepciones genéricas
+        exception(Exception.class, (e, req, res) -> {
+            res.body(ExceptionHandler.handleInternalError(e, req, res));
+        });
+
+        // Manejar excepciones personalizadas
+        exception(CustomException.class, (e, req, res) -> {
+            res.body(ExceptionHandler.handleCustomException(e, req, res));
+        });
+
         // ==================== CONFIGURACIÓN DE CORS ====================
         enableCORS();
-
 
         // ==================== INICIALIZAR CONTROLADORES ====================
         UserController userController = new UserController();
         ItemController itemController = new ItemController();
         OfferController offerController = new OfferController();
+        ViewController viewController = new ViewController();
+
+        // ==================== VISTAS (Mustache) ====================
+        get("/auctions", viewController::renderAuctionList);
+        get("/auction/:id", viewController::renderAuctionDetail);
+
         // ==================== API USUARIOS ====================
         get("/api/users", userController::getAllUsers);
         get("/api/users/:id", userController::getUserById);
@@ -82,6 +110,13 @@ public class Main {
             return "Hello, " + req.params(":name");
         });
 
+
+        // ==================== PÁGINA PRINCIPAL ====================
+        get("/", (req, res) -> {
+            res.redirect("/auctions");
+            return null;
+        });
+
         // Shutdown hook para cerrar la base de datos correctamente
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Closing application...");
@@ -92,6 +127,7 @@ public class Main {
         // Log de inicio
         logger.info("===========================================");
         logger.info(" Server successfully initialized");
+        logger.info(" URL: http://localhost:4567");
         logger.info(" Database connected successfully");
         logger.info("===========================================");
     }
