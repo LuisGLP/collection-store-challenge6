@@ -14,40 +14,75 @@ The system also includes **error handling**, **logging**, and **connection pooli
 ## 🧱 Project Structure
 
 src/
+
  └── main/
+ 
      ├── java/
+     
      │   └── org.challenge6.javaspark/
+     
      │       ├── config/
+     
      │       │   ├── DatabaseConfig.java
+     
      │       │   └── LocalDateTimeAdapter.java
+     
      │       ├── Controllers/
+     
      │       │   ├── ItemController.java
+     
      │       │   ├── OfferController.java
+     
      │       │   ├── UserController.java
+     
      │       │   └── ViewController.java
+     
      │       ├── entity/
+     
      │       │   ├── Item.java
+     
      │       │   ├── Offer.java
+     
      │       │   └── User.java
+     
      │       ├── exceptions/
+     
      |       |   ├── BadRequestException.java
+     
      |       |   ├── ConflicException.java
+     
      |       |   ├── CustomException.java
+     
      |       |   ├── DatabaseException.java
+     
      |       |   ├─  ExceptionHandler.java
+     
      |       |   ├── NotFoundException.java
-     │       │   └── ValidationException.java    
+     
+     │       │   └── ValidationException.java  
+     
      │       ├── services/
+     
      │       │   ├── ItemService.java
+     
      │       │   ├── OfferService.java
+     
      │       │   └── UserService.java
+     
      │       ├── websocket/
+     
      │       │   ├── AuctionWebSocketCreator.java
-     │       │   └── AuctionWebSocketHandler.java    
+     
+     │       │   └── AuctionWebSocketHandler.java  
+     
      │       └── Main.java
+     
      └── resources/
+     
      └── pom.xml
+     
      └── postman_collection.json
+     
      └── README.md
 
 ---
