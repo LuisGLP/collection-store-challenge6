@@ -66,23 +66,39 @@ All dependencies are defined in `pom.xml`:
 Run the following SQL commands in your PostgreSQL environment:
 
 ```sql
-CREATE DATABASE collectiblesdb;
-
+-- =====================================
+-- Users table
+-- =====================================
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    email VARCHAR(100) UNIQUE,
-    address VARCHAR(200)
-);
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 
-CREATE TABLE collectibles (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    description TEXT,
-    price NUMERIC(10,2),
-    category VARCHAR(50),
-    stock INT
-);
+-- =====================================
+--  Items table 
+-- =====================================
+CREATE TABLE items (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    description VARCHAR(200) NOT NULL,
+    base_price DECIMAL(10,2) NOT NULL CHECK (base_price >= 0),
+    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'closed'))
+) ENGINE=InnoDB;
+
+-- =====================================
+-- Oferts table
+-- =====================================
+CREATE TABLE offers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    item_id VARCHAR(50) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 ```
 
 ---
@@ -90,7 +106,7 @@ CREATE TABLE collectibles (
 
 1. Clone the repository:
 ```
-git clone https://github.com/yourusername/collectibles-store.git
+git clone https://github.com/LuisGLP/collection-store-challenge6.git
 cd collectibles-store
 ```
 
