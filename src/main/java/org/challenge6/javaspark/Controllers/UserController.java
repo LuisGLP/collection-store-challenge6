@@ -39,7 +39,9 @@ public class UserController {
         } catch (Exception e) {
             httpLogger.error("Error getting all users", e);
             res.status(500);
-            return gson.toJson(Map.of("error", "Error getting all users", "message", e.getMessage()));
+            return gson.toJson(Map.of(
+                    "error", "Error getting all users",
+                    "message", e.getMessage()));
         }
     }
 
@@ -47,6 +49,19 @@ public class UserController {
     public String getUserById(Request req, Response res) {
         String id = req.params(":id");
         httpLogger.info("GET /api/users/{} - Method: {} - IP: {}", id, req.requestMethod(), req.ip());
+
+        // Validar formato de ID
+        try {
+            Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            httpLogger.warn("Invalid user ID format: {}", id);
+            res.status(400);
+            return gson.toJson(Map.of(
+                    "error", "Invalid ID format",
+                    "message", "User ID must be a valid integer",
+                    "id", id
+            ));
+        }
 
         try {
             Optional<User> user = userService.getUserById(id);
@@ -57,12 +72,19 @@ public class UserController {
                 return gson.toJson(user.get());
             } else {
                 res.status(404);
-                return gson.toJson(Map.of("error", "User doesnt exist", "id", id));
+                return gson.toJson(Map.of(
+                        "error", "User not found",
+                        "message", "No user exists with the provided ID",
+                        "id", id
+                ));
             }
         } catch (Exception e) {
             httpLogger.error("Error get user: {}", id, e);
             res.status(500);
-            return gson.toJson(Map.of("error", "Error getting user", "message", e.getMessage()));
+            return gson.toJson(Map.of(
+                    "error", "Error getting user",
+                    "message", e.getMessage()
+            ));
         }
     }
 

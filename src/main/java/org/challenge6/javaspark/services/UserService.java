@@ -59,12 +59,21 @@ public class UserService {
         return users;
     }
     public Optional<User> getUserById(String id) {
+        // Validar que el ID sea un número válido
+        int userId;
+        try {
+            userId = Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            logger.warn("Invalid user ID format: {}", id);
+            return Optional.empty();
+        }
+
         String sql = "SELECT * FROM users WHERE id = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, id);
+            pstmt.setInt(1, userId); // Usar setInt en lugar de setString
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -83,14 +92,13 @@ public class UserService {
     }
 
     public User addUser(User user) {
-        String sql = "INSERT INTO users (id, name, email) VALUES (?, ?, ?) RETURNING *";
+        String sql = "INSERT INTO users (name, email) VALUES ( ?, ?) RETURNING *";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, String.valueOf(user.getId()));
-            pstmt.setString(2, user.getName());
-            pstmt.setString(3, user.getEmail());
+            pstmt.setString(1, user.getName());
+            pstmt.setString(2, user.getEmail());
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -119,7 +127,7 @@ public class UserService {
 
             pstmt.setString(1, user.getName());
             pstmt.setString(2, user.getEmail());
-            pstmt.setString(4, id);
+            pstmt.setString(3, id);
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
