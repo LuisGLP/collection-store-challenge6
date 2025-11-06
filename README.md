@@ -14,35 +14,41 @@ The system also includes **error handling**, **logging**, and **connection pooli
 ## 🧱 Project Structure
 
 src/
-
-└── main/
-
-├── java/
-
-│ └── org.challenge6.javaspark/
-
-│ ├── config/
-
-│ │ ├── DatabaseConfig.java # PostgreSQL connection setup using HikariCP
-
-│ │ └── LocalDateTimeAdapter.java # JSON adapter for LocalDateTime
-
-│ ├── Controllers/
-
-│ │ └── UserController.java # Handles user routes (CRUD)
-
-│ ├── entity/
-
-│ │ └── User.java # User entity class
-
-│ ├── services/
-
-│ │ └── UserService.java # Business logic layer
-
-│ └── Main.java # Entry point and Spark route setup
-
-└── resources/ # Mustache templates or static files
-
+ └── main/
+     ├── java/
+     │   └── org.challenge6.javaspark/
+     │       ├── config/
+     │       │   ├── DatabaseConfig.java
+     │       │   └── LocalDateTimeAdapter.java
+     │       ├── Controllers/
+     │       │   ├── ItemController.java
+     │       │   ├── OfferController.java
+     │       │   ├── UserController.java
+     │       │   └── ViewController.java
+     │       ├── entity/
+     │       │   ├── Item.java
+     │       │   ├── Offer.java
+     │       │   └── User.java
+     │       ├── exceptions/
+     |       |   ├── BadRequestException.java
+     |       |   ├── ConflicException.java
+     |       |   ├── CustomException.java
+     |       |   ├── DatabaseException.java
+     |       |   ├─  ExceptionHandler.java
+     |       |   ├── NotFoundException.java
+     │       │   └── ValidationException.java    
+     │       ├── services/
+     │       │   ├── ItemService.java
+     │       │   ├── OfferService.java
+     │       │   └── UserService.java
+     │       ├── websocket/
+     │       │   ├── AuctionWebSocketCreator.java
+     │       │   └── AuctionWebSocketHandler.java    
+     │       └── Main.java
+     └── resources/
+     └── pom.xml
+     └── postman_collection.json
+     └── README.md
 
 ---
 
